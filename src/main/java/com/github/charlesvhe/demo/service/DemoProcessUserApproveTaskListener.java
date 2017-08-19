@@ -12,7 +12,10 @@ public class DemoProcessUserApproveTaskListener implements TaskListener {
 
     @Override
     public void notify(DelegateTask delegateTask) {
-        System.out.println("DemoProcessUserApproveTaskListener ");
-        throw new RuntimeException("业务逻辑异常");
+        Integer age = (Integer) delegateTask.getVariable("age");
+        if(age < 18){
+        throw new RuntimeException("业务逻辑异常 未成年");
+        }
+        System.out.println("DemoProcessUserApproveTaskListener "+delegateTask.getVariable("assignee"));
     }
 }

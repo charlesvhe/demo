@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.sql.DataSource;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -39,8 +40,8 @@ public class TestController {
     @GetMapping("/start")
     public String start() {
         Map<String, Object> variables = new HashMap<>();
-        variables.put("candidateUsers", "charles, viviShyy");
         variables.put("candidateGroups", "groupManager");
+        variables.put("assigneeList", Arrays.asList("a1","a2"));
 
         ProcessInstance processInstance = runtimeService.startProcessInstanceByKey(
                 "demo_process", "demo_process_1001", variables);
@@ -50,13 +51,16 @@ public class TestController {
     }
 
     @GetMapping("/approve")
-    public String approve() {
+    public String approve(String user, Integer age) {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("age", age);
+
         Task task = taskService.createTaskQuery()
                 .processDefinitionKey("demo_process")
-                .taskCandidateUser("viviShyy")
+                .taskCandidateUser(user)
                 .singleResult();
 
-        taskService.complete(task.getId());
+        taskService.complete(task.getId(), variables);
 
         this.logger.info("approve");
         return task.toString();
